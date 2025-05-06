@@ -1,3 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">habrreader</string>
+    <string name="app_name">HabrReader</string>
+    <string name="article_image">Изображение статьи</string>
+    <string name="article_header_image">Заглавное изображение статьи</string>
+    <string name="add_to_favorites">Добавить в избранное</string>
+    <string name="remove_from_favorites">Удалить из избранного</string>
+    <string name="no_favorites">У вас пока нет избранных статей</string>
+    <string name="error_loading_articles">Ошибка загрузки статей</string>
+    <string name="error_loading_article">Ошибка загрузки статьи</string>
 </resources>
