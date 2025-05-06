@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.core.widget.SwipeRefreshLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.habrreader.R;
 import com.example.habrreader.data.model.Article;
@@ -60,11 +60,8 @@ public class ArticleListFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         // Настройка функции обновления при свайпе вниз
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                viewModel.refreshArticles();
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            viewModel.refreshArticles();
         });
 
         // Настройка прокрутки для загрузки дополнительных статей
@@ -96,7 +93,9 @@ public class ArticleListFragment extends Fragment {
 
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-            swipeRefreshLayout.setRefreshing(isLoading);
+            if (swipeRefreshLayout.isRefreshing() && !isLoading) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
         });
 
         viewModel.getError().observe(getViewLifecycleOwner(), error -> {
