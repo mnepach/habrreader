@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
 
+
     // Room для работы с базой данных
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-rxjava3:2.6.1")
@@ -58,6 +59,8 @@ dependencies {
 
     // Gson для парсинга JSON
     implementation("com.google.code.gson:gson:2.10.1")
+
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
 
     // Тестирование
     testImplementation(libs.junit)
