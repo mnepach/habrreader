@@ -47,10 +47,10 @@ public class FavoritesFragment extends Fragment {
         // Настройка RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new ArticleAdapter(article -> {
-            // Обработка нажатия на статью - переход к деталям
-            FavoritesFragmentDirections.ActionFavoritesFragmentToArticleDetailsFragment action =
-                    FavoritesFragmentDirections.actionFavoritesFragmentToArticleDetailsFragment(article.getId());
-            Navigation.findNavController(view).navigate(action);
+            // Обработка нажатия на статью - переход к деталям (исправлено)
+            Bundle args = new Bundle();
+            args.putInt("articleId", article.getId());
+            Navigation.findNavController(view).navigate(R.id.action_favoritesFragment_to_articleDetailsFragment, args);
         }, article -> {
             // Обработка нажатия на кнопку избранного
             viewModel.toggleFavorite(article);

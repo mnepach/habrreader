@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.core.widget.SwipeRefreshLayout;
 
 import com.example.habrreader.R;
 import com.example.habrreader.data.model.Article;
@@ -49,10 +49,10 @@ public class ArticleListFragment extends Fragment {
         // Настройка RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new ArticleAdapter(article -> {
-            // Обработка нажатия на статью - переход к деталям
-            ArticleListFragmentDirections.ActionArticleListFragmentToArticleDetailsFragment action =
-                    ArticleListFragmentDirections.actionArticleListFragmentToArticleDetailsFragment(article.getId());
-            Navigation.findNavController(view).navigate(action);
+            // Обработка нажатия на статью - переход к деталям (исправлено)
+            Bundle args = new Bundle();
+            args.putInt("articleId", article.getId());
+            Navigation.findNavController(view).navigate(R.id.action_articleListFragment_to_articleDetailsFragment, args);
         }, article -> {
             // Обработка нажатия на кнопку избранного
             viewModel.toggleFavorite(article);
@@ -60,8 +60,11 @@ public class ArticleListFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         // Настройка функции обновления при свайпе вниз
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            viewModel.refreshArticles();
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                viewModel.refreshArticles();
+            }
         });
 
         // Настройка прокрутки для загрузки дополнительных статей

@@ -36,6 +36,7 @@ public class ArticleDetailsFragment extends Fragment {
     private FloatingActionButton fabFavorite;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private Toolbar toolbar;
+    private int articleId;
 
     // Форматы даты
     private final SimpleDateFormat apiDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
@@ -67,8 +68,10 @@ public class ArticleDetailsFragment extends Fragment {
         ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
         ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Получение ID статьи из аргументов
-        int articleId = ArticleDetailsFragmentArgs.fromBundle(getArguments()).getArticleId();
+        // Получение ID статьи из аргументов (исправлено)
+        if (getArguments() != null) {
+            articleId = getArguments().getInt("articleId", 0);
+        }
 
         // Подключение ViewModel
         viewModel = new ViewModelProvider(this).get(ArticleDetailsViewModel.class);

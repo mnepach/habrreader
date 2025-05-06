@@ -62,6 +62,12 @@ dependencies {
 
     implementation ("com.github.bumptech.glide:glide:4.16.0")
 
+    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
+    // Navigation Component
+    implementation ("androidx.navigation:navigation-fragment:2.5.3")
+    implementation ("androidx.navigation:navigation-ui:2.5.3")
+
     // Тестирование
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
