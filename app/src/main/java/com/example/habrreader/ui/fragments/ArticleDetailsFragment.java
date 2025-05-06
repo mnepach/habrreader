@@ -22,11 +22,6 @@ import com.example.habrreader.viewmodel.ArticleDetailsViewModel;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 public class ArticleDetailsFragment extends Fragment {
 
     private ArticleDetailsViewModel viewModel;
@@ -36,11 +31,7 @@ public class ArticleDetailsFragment extends Fragment {
     private FloatingActionButton fabFavorite;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private Toolbar toolbar;
-    private int articleId;
-
-    // Форматы даты
-    private final SimpleDateFormat apiDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
-    private final SimpleDateFormat displayDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
+    private String articleId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,7 +43,6 @@ public class ArticleDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Инициализация UI компонентов
         imageHeader = view.findViewById(R.id.image_header);
         textTitle = view.findViewById(R.id.text_title);
         textAuthor = view.findViewById(R.id.text_author);
@@ -64,66 +54,39 @@ public class ArticleDetailsFragment extends Fragment {
         collapsingToolbarLayout = view.findViewById(R.id.collapsing_toolbar);
         toolbar = view.findViewById(R.id.toolbar);
 
-        // Настройка Toolbar
         ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
         ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Получение ID статьи из аргументов (исправлено)
         if (getArguments() != null) {
-            articleId = getArguments().getInt("articleId", 0);
+            articleId = getArguments().getString("articleId");
         }
 
-        // Подключение ViewModel
         viewModel = new ViewModelProvider(this).get(ArticleDetailsViewModel.class);
 
-        // Наблюдение за изменениями данных
         viewModel.getArticle().observe(getViewLifecycleOwner(), this::updateUI);
-
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             fabFavorite.setVisibility(isLoading ? View.GONE : View.VISIBLE);
         });
-
         viewModel.getError().observe(getViewLifecycleOwner(), error -> {
-            if (error != null) {
-                textError.setText(error);
-                textError.setVisibility(View.VISIBLE);
-            } else {
-                textError.setVisibility(View.GONE);
-            }
+            textError.setText(error);
+            textError.setVisibility(error != null ? View.VISIBLE : View.GONE);
         });
 
-        // Обработка нажатия на кнопку избранного
         fabFavorite.setOnClickListener(v -> viewModel.toggleFavorite());
 
-        // Загрузка деталей статьи
         viewModel.loadArticleDetails(articleId);
     }
 
     private void updateUI(Article article) {
         if (article == null) return;
 
-        // Заголовок в CollapsingToolbarLayout
         collapsingToolbarLayout.setTitle(article.getTitle());
-
-        // Основная информация
         textTitle.setText(article.getTitle());
         textAuthor.setText(article.getAuthor());
         textContent.setText(article.getContent());
+        textDate.setText(article.getPublishedAt());
 
-        // Форматирование даты
-        try {
-            Date date = apiDateFormat.parse(article.getPublishedAt());
-            if (date != null) {
-                textDate.setText(displayDateFormat.format(date));
-            } else {
-                textDate.setText(article.getPublishedAt());
-            }
-        } catch (ParseException e) {
-            textDate.setText(article.getPublishedAt());
-        }
-
-        // Загрузка изображения
         if (article.getImageUrl() != null && !article.getImageUrl().isEmpty()) {
             Glide.with(this)
                     .load(article.getImageUrl())
@@ -133,17 +96,11 @@ public class ArticleDetailsFragment extends Fragment {
                     .into(imageHeader);
         }
 
-        // Обновление иконки избранного
         updateFavoriteIcon(article.isFavorite());
     }
 
     private void updateFavoriteIcon(boolean isFavorite) {
-        if (isFavorite) {
-            fabFavorite.setImageResource(R.drawable.ic_favorites);
-            fabFavorite.setContentDescription(getString(R.string.remove_from_favorites));
-        } else {
-            fabFavorite.setImageResource(R.drawable.ic_favorite_border);
-            fabFavorite.setContentDescription(getString(R.string.add_to_favorites));
-        }
+        fabFavorite.setImageResource(isFavorite ? R.drawable.ic_favorites : R.drawable.ic_favorite_border);
+        fabFavorite.setContentDescription(getString(isFavorite ? R.string.remove_from_favorites : R.string.add_to_favorites));
     }
 }

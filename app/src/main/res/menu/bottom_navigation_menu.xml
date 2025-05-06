@@ -3,7 +3,7 @@
     <item
         android:id="@+id/articleListFragment"
         android:icon="@drawable/ic_article_list"
-        android:title="Статьи" />
+        android:title="Картинки" />
     <item
         android:id="@+id/favoritesFragment"
         android:icon="@drawable/ic_favorites"

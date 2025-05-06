@@ -38,7 +38,7 @@ public class ArticleDetailsViewModel extends AndroidViewModel {
         return errorLiveData;
     }
 
-    public void loadArticleDetails(int articleId) {
+    public void loadArticleDetails(String articleId) {
         isLoadingLiveData.setValue(true);
         Disposable disposable = repository.getArticleDetails(articleId)
                 .subscribe(
@@ -47,7 +47,7 @@ public class ArticleDetailsViewModel extends AndroidViewModel {
                             isLoadingLiveData.setValue(false);
                         },
                         error -> {
-                            errorLiveData.setValue("Ошибка загрузки статьи: " + error.getMessage());
+                            errorLiveData.setValue("Ошибка загрузки изображения: " + error.getMessage());
                             isLoadingLiveData.setValue(false);
                         }
                 );

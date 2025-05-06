@@ -40,31 +40,21 @@ public class ArticleListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Инициализация UI компонентов
         recyclerView = view.findViewById(R.id.recycler_view);
         progressBar = view.findViewById(R.id.progress_bar);
         textError = view.findViewById(R.id.text_error);
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh);
 
-        // Настройка RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new ArticleAdapter(article -> {
-            // Обработка нажатия на статью - переход к деталям (исправлено)
             Bundle args = new Bundle();
-            args.putInt("articleId", article.getId());
+            args.putString("articleId", article.getId());
             Navigation.findNavController(view).navigate(R.id.action_articleListFragment_to_articleDetailsFragment, args);
-        }, article -> {
-            // Обработка нажатия на кнопку избранного
-            viewModel.toggleFavorite(article);
-        });
+        }, article -> viewModel.toggleFavorite(article));
         recyclerView.setAdapter(adapter);
 
-        // Настройка функции обновления при свайпе вниз
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            viewModel.refreshArticles();
-        });
+        swipeRefreshLayout.setOnRefreshListener(() -> viewModel.refreshArticles());
 
-        // Настройка прокрутки для загрузки дополнительных статей
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -83,21 +73,15 @@ public class ArticleListFragment extends Fragment {
             }
         });
 
-        // Подключение ViewModel
         viewModel = new ViewModelProvider(this).get(ArticleListViewModel.class);
 
-        // Наблюдение за изменениями данных
-        viewModel.getArticles().observe(getViewLifecycleOwner(), articles -> {
-            adapter.submitList(articles);
-        });
-
+        viewModel.getArticles().observe(getViewLifecycleOwner(), articles -> adapter.submitList(articles));
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             if (swipeRefreshLayout.isRefreshing() && !isLoading) {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-
         viewModel.getError().observe(getViewLifecycleOwner(), error -> {
             textError.setText(error);
             textError.setVisibility(error != null ? View.VISIBLE : View.GONE);

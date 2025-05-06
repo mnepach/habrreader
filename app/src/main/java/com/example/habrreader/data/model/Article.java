@@ -1,6 +1,8 @@
 package com.example.habrreader.data.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
@@ -11,37 +13,34 @@ import java.io.Serializable;
 public class Article implements Serializable {
 
     @PrimaryKey
+    @NonNull
     @SerializedName("id")
-    private int id;
+    private String id;
 
-    @SerializedName("title")
     private String title;
-
-    @SerializedName("description")
     private String description;
-
-    @SerializedName("content")
     private String content;
-
-    @SerializedName("author")
     private String author;
-
-    @SerializedName("published_at")
     private String publishedAt;
 
-    @SerializedName("image_url")
-    private String imageUrl;
-
     @SerializedName("url")
-    private String url;
+    private String imageUrl;
 
     private boolean isFavorite;
 
     public Article() {
+        this.id = "";
+        this.title = "Cat Image";
+        this.description = "A cute cat image";
+        this.content = "No additional content";
+        this.author = "Unknown";
+        this.publishedAt = "N/A";
+        this.imageUrl = "";
     }
 
-    public Article(int id, String title, String description, String content, String author,
-                   String publishedAt, String imageUrl, String url) {
+    @Ignore
+    public Article(String id, String title, String description, String content, String author,
+                   String publishedAt, String imageUrl) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -49,14 +48,14 @@ public class Article implements Serializable {
         this.author = author;
         this.publishedAt = publishedAt;
         this.imageUrl = imageUrl;
-        this.url = url;
     }
 
-    public int getId() {
+    @NonNull
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(@NonNull String id) {
         this.id = id;
     }
 
@@ -106,14 +105,6 @@ public class Article implements Serializable {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public boolean isFavorite() {

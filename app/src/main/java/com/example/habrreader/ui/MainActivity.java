@@ -1,10 +1,11 @@
 package com.example.habrreader.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -22,13 +23,23 @@ public class MainActivity extends AppCompatActivity {
 
         // Настройка нижней навигации
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+        // Получение NavController через NavHostFragment
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment == null) {
+            Log.e("MainActivity", "NavHostFragment not found for ID R.id.nav_host_fragment");
+            throw new IllegalStateException("NavHostFragment not found");
+        }
+        navController = navHostFragment.getNavController();
+        Log.d("MainActivity", "NavController initialized successfully");
 
         // Определяем верхние уровни навигации (без стрелки "назад")
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.articleListFragment, R.id.favoritesFragment
         ).build();
 
+        // Настройка ActionBar и BottomNavigationView с NavController
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
     }

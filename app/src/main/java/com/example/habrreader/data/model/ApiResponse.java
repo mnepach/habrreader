@@ -9,7 +9,7 @@ public class ApiResponse {
     @SerializedName("status")
     private String status;
 
-    @SerializedName("total_results")
+    @SerializedName("totalResults")
     private int totalResults;
 
     @SerializedName("articles")

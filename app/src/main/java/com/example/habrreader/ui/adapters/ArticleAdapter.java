@@ -67,14 +67,12 @@ public class ArticleAdapter extends ListAdapter<Article, ArticleAdapter.ArticleV
             imageArticle = itemView.findViewById(R.id.image_article);
             buttonFavorite = itemView.findViewById(R.id.button_favorite);
 
-            // Обработка нажатия на элемент списка
             itemView.setOnClickListener(v -> {
                 if (article != null && onArticleClickListener != null) {
                     onArticleClickListener.onArticleClick(article);
                 }
             });
 
-            // Обработка нажатия на кнопку "Избранное"
             buttonFavorite.setOnClickListener(v -> {
                 if (article != null && onFavoriteClickListener != null) {
                     onFavoriteClickListener.onFavoriteClick(article);
@@ -84,13 +82,12 @@ public class ArticleAdapter extends ListAdapter<Article, ArticleAdapter.ArticleV
 
         void bind(Article article) {
             this.article = article;
-            textTitle.setText(article.getTitle());
-            textDescription.setText(article.getDescription());
-            textAuthor.setText(article.getAuthor());
+            textTitle.setText(article.getTitle() != null ? article.getTitle() : "");
+            textDescription.setText(article.getDescription() != null ? article.getDescription() : "");
+            textAuthor.setText(article.getAuthor() != null ? article.getAuthor() : "");
 
-            // Загрузка изображения с помощью Glide
             if (article.getImageUrl() != null && !article.getImageUrl().isEmpty()) {
-                Glide.with(itemView.getContext())
+                Glide.with(itemView)
                         .load(article.getImageUrl())
                         .centerCrop()
                         .placeholder(R.drawable.placeholder_image)
@@ -100,25 +97,20 @@ public class ArticleAdapter extends ListAdapter<Article, ArticleAdapter.ArticleV
                 imageArticle.setImageResource(R.drawable.placeholder_image);
             }
 
-            // Обновление значка избранного
             updateFavoriteIcon(article.isFavorite());
         }
 
         private void updateFavoriteIcon(boolean isFavorite) {
-            if (isFavorite) {
-                buttonFavorite.setImageResource(R.drawable.ic_favorites);
-                buttonFavorite.setContentDescription(itemView.getContext().getString(R.string.remove_from_favorites));
-            } else {
-                buttonFavorite.setImageResource(R.drawable.ic_favorite_border);
-                buttonFavorite.setContentDescription(itemView.getContext().getString(R.string.add_to_favorites));
-            }
+            buttonFavorite.setImageResource(isFavorite ? R.drawable.ic_favorites : R.drawable.ic_favorite_border);
+            buttonFavorite.setContentDescription(
+                    itemView.getContext().getString(isFavorite ? R.string.remove_from_favorites : R.string.add_to_favorites));
         }
     }
 
     static class ArticleDiffCallback extends DiffUtil.ItemCallback<Article> {
         @Override
         public boolean areItemsTheSame(@NonNull Article oldItem, @NonNull Article newItem) {
-            return oldItem.getId() == newItem.getId();
+            return oldItem.getId().equals(newItem.getId());
         }
 
         @Override

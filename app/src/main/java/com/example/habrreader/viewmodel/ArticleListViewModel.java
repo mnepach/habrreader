@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.habrreader.data.model.Article;
 import com.example.habrreader.data.repository.ArticleRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -22,9 +23,8 @@ public class ArticleListViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> isLoadingLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
     private final CompositeDisposable disposables = new CompositeDisposable();
-
     private int currentPage = 1;
-    private static final int PER_PAGE = 20;
+    private final int perPage = 20;
 
     public ArticleListViewModel(@NonNull Application application) {
         super(application);
@@ -46,15 +46,21 @@ public class ArticleListViewModel extends AndroidViewModel {
 
     public void loadArticles() {
         isLoadingLiveData.setValue(true);
-        Disposable disposable = repository.getArticles(currentPage, PER_PAGE)
+        Disposable disposable = repository.getArticles(currentPage, perPage)
                 .subscribe(
                         articles -> {
                             articlesLiveData.setValue(articles);
                             isLoadingLiveData.setValue(false);
+                            if (articles.isEmpty()) {
+                                errorLiveData.setValue("No data available or network error");
+                            } else {
+                                errorLiveData.setValue(null);
+                            }
                         },
-                        error -> {
-                            errorLiveData.setValue("Ошибка загрузки статей: " + error.getMessage());
+                        throwable -> {
+                            errorLiveData.setValue("Error loading images: " + throwable.getMessage());
                             isLoadingLiveData.setValue(false);
+                            articlesLiveData.setValue(new ArrayList<>());
                         }
                 );
         disposables.add(disposable);
@@ -74,19 +80,9 @@ public class ArticleListViewModel extends AndroidViewModel {
         Disposable disposable = repository.toggleFavorite(article)
                 .subscribe(
                         () -> {
-                            // Обновляем состояние в UI
-                            List<Article> currentArticles = articlesLiveData.getValue();
-                            if (currentArticles != null) {
-                                for (Article a : currentArticles) {
-                                    if (a.getId() == article.getId()) {
-                                        a.setFavorite(!a.isFavorite());
-                                        break;
-                                    }
-                                }
-                                articlesLiveData.setValue(currentArticles);
-                            }
+                            loadArticles(); // Обновляем список после изменения избранного
                         },
-                        error -> errorLiveData.setValue("Ошибка при изменении статуса избранного: " + error.getMessage())
+                        throwable -> errorLiveData.setValue("Error toggling favorite: " + throwable.getMessage())
                 );
         disposables.add(disposable);
     }

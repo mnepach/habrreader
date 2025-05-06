@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/articleListFragment"
         android:name="com.example.habrreader.ui.fragments.ArticleListFragment"
-        android:label="Статьи"
+        android:label="Images"
         tools:layout="@layout/fragment_article_list">
         <action
             android:id="@+id/action_articleListFragment_to_articleDetailsFragment"
@@ -18,17 +18,17 @@
     <fragment
         android:id="@+id/articleDetailsFragment"
         android:name="com.example.habrreader.ui.fragments.ArticleDetailsFragment"
-        android:label="Статья"
+        android:label="Image Details"
         tools:layout="@layout/fragment_article_details">
         <argument
             android:name="articleId"
-            app:argType="integer" />
+            app:argType="string" />
     </fragment>
 
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.habrreader.ui.fragments.FavoritesFragment"
-        android:label="Избранное"
+        android:label="Favorites"
         tools:layout="@layout/fragment_favorites">
         <action
             android:id="@+id/action_favoritesFragment_to_articleDetailsFragment"
