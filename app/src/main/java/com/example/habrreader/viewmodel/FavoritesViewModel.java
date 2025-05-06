@@ -1,4 +1,5 @@
 package com.example.habrreader.viewmodel;
 
-public class FavoritesViewModel {
+public class
+FavoritesViewModel {
 }
